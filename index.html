@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maharathi Academy & Computer Center - Admission & Billing</title>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* General Body Styling */
+        body { 
+            font-family: 'Inter', sans-serif; /* Using Inter for consistency with Tailwind */
+            background-color: #e4e0e0d2;
+            display: flex;
+            flex-direction: column; /* Allow content to stack vertically */
+            align-items: center; /* Center content horizontally */
+            padding: 20px;
+            box-sizing: border-box;
+            margin: 0; /* Remove default body margin */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+ 
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%; /* Ensure it takes full width for centering */
+            margin-bottom: 20px; /* Space below logo */
+        }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+            max-height: 100px; /* Adjusted max-height for better mobile scaling */
+        }
+
+        /* Desktop specific logo positioning */
+        @media (min-width: 769px) {
+            .logo-container {
+                display: block; /* Revert to block for fixed positioning */
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                margin-bottom: 0; /* Remove margin when fixed */
+                width: auto; /* Allow logo to take its natural width */
+            }
+            .logo img {
+                max-height: 200px; /* Original max-height for desktop */
+            }
+        }
+
+        /* Main Form Container */
+        .form-container {
+            border: 1px solid black;
+            background-color: #ffffffd3;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1; /* Ensure form is above logo if fixed */
+            opacity: 0; /* Initial state for fade-in animation */
+            transform: translateY(20px); /* Initial state for slide-up animation */
+            animation: fadeInSlideUp 0.8s ease-out forwards; /* Apply animation */
+        }
+
+        .center {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap; /* Allow wrapping for responsiveness */
+            position: relative;
+        }
+
+        /* Header Left Content (Academy Info) */
+        .header-left {
+            text-align: left;
+            flex: 1;
+            min-width: 300px;
+            opacity: 0; /* Initial state for fade-in */
+            animation: fadeIn 0.8s ease-out forwards 0.2s; /* Delayed fade-in */
+        }
+
+        .header-left .reg-no {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .header-left h1 {
+            margin: 4px 0; /* Adjusted margin */
+            font-size: 1.6em;
+            color: #669cf9f3;
+        }
+
+        .header-left p {
+            font-size: 0.8em;
+            margin: 1px 0;
+            color: #666;
+        }
+        .header-left p[style] { /* Override specific user inline style for color */
+            color: #669cf9f3 !important;
+        }
+
+        .header-left a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .header-left a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header Right Content (Photo Upload Box) */
+        .header-right {
+            width: 120px;
+            height: 140px;
+            border: 1px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            line-height: 1.3;
+            padding: 5px;
+            margin-left: 20px;
+            overflow: hidden;
+            opacity: 0; /* Initial state for fade-in */
+            animation: fadeIn 0.8s ease-out forwards 0.4s; /* Delayed fade-in */
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transitions */
+        }
+
+        .header-right:hover {
+            transform: translateY(-3px); /* Lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+        }
+        .header-right:active {
+            transform: translateY(0) scale(0.98); /* Press effect on click */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-right label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .header-right #photo-preview {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: none;
+        }
+
+        .header-right input[type="file"] {
+            display: none;
+        }
+
+        /* Admission Form Title */
+        .header h2 {
+            font-size: 1.4em;
+            margin-top: 15px;
+            color: #ef3939f3;
+            text-decoration: underline;
+            width: 100%;
+            text-align: center;
+            flex-basis: 100%;
+            opacity: 0; /* Initial state for fade-in */
+            animation: fadeIn 0.8s ease-out forwards 0.6s; /* Delayed fade-in */
+        }
+
+        /* Form Group (for single label-input rows) */
+        .form-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .form-group label {
+            flex-shrink: 0;
+            margin-right: 10px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+            width: auto;
+        }
+        .form-group label[style] {
+            color: #ef3939f3 !important;
+            font-size: 0.5cm !important;
+        }
+
+        /* General styling for input lines (bottom border only) */
+        .form-group input:not([type="radio"]),
+        .inline-group input:not([type="radio"]),
+        .address-group input,
+        .date-subgroup input,
+        .time-group input,
+        .time-group select,
+        .signatures input {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            padding: 5px 0;
+            outline: none;
+            font-size: 1em;
+            flex-grow: 1;
+            min-width: 150px;
+            background-color: transparent;
+            box-shadow: none;
+            transition: border-bottom-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease; /* Smooth transition for focus */
+        }
+
+        /* Focus state for inputs */
+        .form-group input:focus,
+        .form-group select:focus,
+        .inline-group input:focus,
+        .address-group input:focus,
+        .date-subgroup input:focus,
+        .time-group input:focus,
+        .time-group select:focus,
+        .signatures input:focus {
+            border-bottom-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2); /* Subtle blue shadow on focus */
+            transform: translateY(-1px); /* Slight lift on focus */
+        }
+
+        /* Inline Group (for multiple label-input pairs on one row) */
+        .inline-group {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .inline-group > div {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+        }
+
+        .inline-group > div label {
+            margin-right: 5px;
+            width: auto;
+        }
+        /* Specific styles for client-email and sex labels */
+        .inline-group > div label[for="client-email"],
+        .inline-group > div label[for="sex"] {
+            color: #333; /* Black color */
+            font-size: 1em; /* Same as default input font size */
+            font-weight: bold;
+        }
+        .inline-group > div label[style] {
+            color: #ff0000f3 !important;
+            font-size: 0.5cm !important;
+        }
+
+        /* Radio Button Group */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            font-weight: normal;
+            margin-right: 10px;
+            margin-left: 5px;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 3px;
+            border: none;
+            flex-grow: 0;
+            min-width: auto;
+        }
+
+        /* Specific spacing for gender/marital status radio labels */
+        .radio-group label[for="male"], .radio-group label[for="female"] {
+            margin-left: 5px;
+        }
+        .radio-group label[for="marital-status-label"] {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        /* Address Group (Grid Layout) */
+        .address-group {
+            display: grid;
+            grid-template-columns: auto 1fr auto 1fr auto 1fr;
+            gap: 5px 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .address-group label {
+            grid-column: auto;
+            text-align: left;
+            margin-right: 5px;
+        }
+
+        .address-group input {
+            grid-column: auto;
+            min-width: 100px;
+        }
+
+        .address-group .long-input {
+            grid-column: 1 / -1;
+            margin-bottom: 5px;
+        }
+
+        /* Date Group */
+        .date-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .date-subgroup {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            flex-wrap: wrap;
+        }
+
+        .date-subgroup label {
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        .date-subgroup label:last-of-type {
+            font-weight: normal;
+        }
+
+        .date-subgroup input {
+            width: 40px;
+            text-align: center;
+            flex-grow: 0;
+            min-width: 40px;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .date-subgroup span {
+            margin: 0 2px;
+        }
+
+        /* Time Group */
+        .time-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .time-group label {
+            font-weight: bold;
+        }
+        .time-group input, .time-group select {
+            flex-grow: 1;
+            min-width: 80px;
+        }
+        .time-group #shift {
+            min-width: 120px;
+            padding: 5px 0;
+        }
+
+        /* Instructions Section */
+        .instructions {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        .instructions h3 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #ef3939f3;
+            font-size: 0.5cm;
+        }
+
+        .instructions ol {
+            list-style-type: decimal;
+            padding-left: 20px;
+            color: #555;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        /* Signatures Section */
+        .signatures {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #555;
+            flex-wrap: wrap;
+        }
+
+        .signature-item {
+            text-align: center;
+            flex-basis: 30%;
+            min-width: 150px;
+            margin-bottom: 15px;
+        }
+
+        .signature-item p {
+            margin-top: 5px;
+            margin-bottom: 3px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Form Buttons */
+        .form-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .form-buttons button {
+            padding: 10px 25px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Added transitions */
+        }
+        .form-buttons button[type="submit"] {
+            background-color: #28a745;
+        }
+        .form-buttons button[type="submit"]:hover {
+            background-color: #218838;
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); /* Green shadow */
+        }
+        .form-buttons button[type="submit"]:active {
+            transform: translateY(0) scale(0.98); /* Press effect */
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        }
+        .form-buttons button[type="reset"] {
+            background-color: #dc3545;
+            margin-left: 20px;
+        }
+        .form-buttons button[type="reset"]:hover {
+            background-color: #c82333;
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3); /* Red shadow */
+        }
+        .form-buttons button[type="reset"]:active {
+            transform: translateY(0) scale(0.98); /* Press effect */
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Styles for photo upload boxes (passport and money screenshot) */
+        .photo-upload-box { /* General class for both photo boxes */
+            width: 150px; /* Adjust size as needed */
+            height: 150px; /* Adjust size as needed */
+            border: 1px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            line-height: 1.3;
+            padding: 5px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transitions */
+        }
+
+        .photo-upload-box:hover {
+            transform: translateY(-3px); /* Lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+        }
+        .photo-upload-box:active {
+            transform: translateY(0) scale(0.98); /* Press effect on click */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-upload-box label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .photo-upload-box .preview-area { /* General class for preview divs */
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: none;
+        }
+
+        .photo-upload-box input[type="file"] {
+            display: none;
+        }
+
+        /* Specific margin for header-right photo box */
+        .header-right {
+            margin-left: 20px;
+        }
+
+        /* Flex container for payment screenshot and QR scan boxes */
+        .payment-qr-group {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 20px; /* Space between the two boxes */
+            justify-content: flex-start; /* Align to start on desktop */
+            width: auto; /* Allow it to shrink/grow based on content */
+            margin-bottom: 0; /* Handled by parent */
+            align-items: flex-start; /* Align labels to top */
+        }
+
+        /* Adjustments for the form-group containing the payment/QR boxes */
+        .money-screenshot-form-group {
+            display: flex; /* Make it a flex container */
+            flex-direction: row; /* Default to row for desktop */
+            align-items: center; /* Vertically center items in the row */
+            gap: 20px; /* Space between label and the payment-qr-group */
+            margin-bottom: 10px; /* Keep consistent margin */
+            flex-wrap: wrap; /* Allow wrapping if space is tight on desktop */
+        }
+        .money-screenshot-form-group > label {
+            margin-bottom: 0; /* Remove mobile specific margin-bottom */
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+        .money-screenshot-form-group .photo-upload-box {
+            margin: 0; /* Remove auto margin from mobile */
+            flex-shrink: 0; /* Prevent boxes from shrinking too much */
+        }
+
+        /* New style for the permanent QR code display box */
+        .qr-code-display-box {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            padding: 5px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transitions */
+        }
+        .qr-code-display-box:hover {
+            transform: translateY(-3px); /* Lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+        }
+        .qr-code-display-box:active {
+            transform: translateY(0) scale(0.98); /* Press effect on click */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .qr-code-display-box img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+
+        /* Responsive Adjustments for Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Reduce overall padding on smaller screens */
+            }
+            .form-container {
+                padding: 15px; /* Adjust form container padding */
+                border: none; /* Remove border on mobile for cleaner look */
+            }
+
+            .logo-container {
+                margin-bottom: 15px; /* Adjust margin below logo */
+            }
+            .logo img {
+                max-height: 80px; /* Smaller logo on mobile */
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding-bottom: 10px; /* Reduce padding */
+            }
+
+            .header-left {
+                text-align: center;
+                margin-bottom: 15px;
+                min-width: unset; /* Remove min-width constraint */
+                width: 100%; /* Take full width */
+            }
+            .header-left h1 {
+                font-size: 1.4em; /* Smaller font for header */
+            }
+            .header-left p {
+                font-size: 0.75em; /* Smaller font for contact info */
+            }
+
+            .header-right {
+                position: static; /* Remove fixed positioning */
+                margin-bottom: 15px;
+                margin-left: 0;
+                width: 100px; /* Smaller photo box */
+                height: 120px; /* Smaller photo box */
+                order: -1; /* Place photo box at the top of the header on mobile */
+            }
+
+            .header h2 {
+                margin-top: 10px;
+                font-size: 1.2em; /* Smaller form title */
+            }
+
+            .form-group, .inline-group, .radio-group, .address-group, .date-group, .time-group, .signatures {
+                flex-direction: column; /* Stack elements vertically */
+                gap: 5px; /* Reduce gap between stacked items */
+                margin-bottom: 10px; /* Consistent margin */
+                align-items: flex-start; /* Align items to the start */
+                width: 100%; /* Ensure full width */
+            }
+
+            .form-group label, .inline-group > div label, .date-subgroup label, .time-group label {
+                margin-right: 0; /* Remove right margin */
+                margin-bottom: 5px; /* Add bottom margin for stacked labels */
+                width: auto; /* Allow label to take natural width */
+            }
+
+            .form-group input:not([type="radio"]),
+            .inline-group input:not([type="radio"]),
+            .address-group input,
+            .date-subgroup input,
+            .time-group input,
+            .time-group select,
+            .signatures input {
+                width: 100%; /* Make inputs take full width */
+                min-width: unset; /* Remove min-width constraint */
+                box-sizing: border-box; /* Include padding in width */
+            }
+
+            .inline-group > div {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 10px;
+                width: 100%;
+                min-width: unset;
+            }
+
+            .address-group {
+                grid-template-columns: 1fr; /* Single column for address fields */
+            }
+
+            .address-group .long-input {
+                grid-column: 1 / 2;
+            }
+
+            .date-subgroup input {
+                width: 60px; /* Adjust width for date inputs */
+                text-align: center;
+            }
+
+            .time-group #shift {
+                width: 100%; /* Full width for select */
+                min-width: unset;
+            }
+
+            .instructions {
+                margin-top: 15px;
+                padding-top: 10px;
+            }
+            .instructions h3 {
+                font-size: 1em; /* Smaller instruction title */
+            }
+            .instructions ol {
+                padding-left: 15px; /* Adjust list padding */
+                font-size: 0.85em; /* Smaller instruction text */
+            }
+
+            .signatures {
+                margin-top: 20px;
+            }
+            .signature-item {
+                width: 90%; /* Make signature items wider */
+                margin-bottom: 15px;
+            }
+
+            .form-buttons button {
+                padding: 8px 20px; /* Smaller buttons */
+                font-size: 1em;
+            }
+            .form-buttons button[type="reset"] {
+                margin-left: 10px; /* Reduce margin between buttons */
+            }
+
+            /* Adjustments for the hidden receipt and image preview sections */
+            #bill-image-preview-container {
+                padding: 15px;
+            }
+            #bill-image-preview {
+                width: 100%; /* Ensure image scales on mobile */
+                height: auto;
+            }
+            #download-bill-image {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+
+            /* Money screenshot form group responsiveness */
+            .money-screenshot-form-group {
+                flex-direction: column; /* Stack label and boxes on mobile */
+                align-items: flex-start; /* Align label to start */
+                gap: 5px; /* Smaller gap when stacked */
+            }
+            .money-screenshot-form-group > label {
+                margin-bottom: 5px; /* Add bottom margin for stacked label */
+            }
+            .money-screenshot-form-group .payment-qr-group {
+                flex-direction: column; /* Stack the boxes on mobile */
+                justify-content: center; /* Center the stacked boxes */
+                align-items: center; /* Center items within payment-qr-group on mobile */
+                gap: 10px; /* Smaller gap when stacked */
+                width: 100%; /* Take full width on mobile */
+            }
+            .money-screenshot-form-group .photo-upload-box,
+            .money-screenshot-form-group .qr-code-display-box { /* Apply to both boxes */
+                margin: 0 auto; /* Center individual boxes when stacked */
+            }
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Custom Styles for Uploaded Photo Display */
+        .photo-display-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 250px; /* Fixed width for consistency */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-display-box img {
+            width: 100%;
+            height: 180px; /* Fixed height for image area */
+            object-fit: contain; /* Ensure image fits without cropping */
+            border-radius: 4px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .photo-display-box img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .photo-display-box p {
+            font-size: 0.85em;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        /* Responsive adjustments for photo display boxes */
+        @media (max-width: 768px) {
+            .photo-display-box {
+                width: 100%; /* Take full width on mobile */
+                max-width: 250px; /* But don't exceed original max width */
+                margin: 0 auto; /* Center them */
+            }
+            .photo-display-box img {
+                height: 150px; /* Slightly smaller height on mobile */
+            }
+            #uploaded-photos-section .flex {
+                flex-direction: column; /* Stack photos vertically on mobile */
+                gap: 20px;
+            }
+        }
+
+        /* Custom Alert Modal Styles */
+        #custom-alert-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #custom-alert-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #custom-alert-modal > div {
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+        #custom-alert-modal:not(.hidden) > div {
+            transform: translateY(0);
+        }
+
+        /* New styling for receipt text display spans */
+        .receipt-text-display {
+            flex: 1;
+            border-bottom: 1px dashed #000;
+            font-size: 0.9em;
+            color: #000;
+            padding: 4px 2px;
+            min-height: 1.2em; /* Ensure some height even if empty */
+            display: inline-block; /* Allows padding and border-bottom to work */
+            word-break: break-word; /* Prevent long words from overflowing */
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="logo">
+            <a href="logo.png">
+                <img src="logo.png" alt="Universal Academy & Computer Center Logo">
+            </a>
+        </div>
+    </div>
+    <div class="form-container">
+        <div class="header">
+            <div class="header-left">
+                <p class="reg-no">Reg No: UACOO <br>Fee:</p>
+                <div class="center">
+                    <h1 style="color: #669cf9f3;">Maharathi Academy & Computer Center</h1>
+                    <p style="color: #669cf9f3;">Biratnagar 00,Bhairav Marga, Morang Nepal, Koshi Province No.01</p>
+                    <p>Contact No: 021461321, 9810548172, 9802359553</p>
+                    <p>E-mail: <a href="mailto:09isar2006@gmail.com">maharathi.academy009@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="header-right photo-upload-box"> 
+                <label for="photo-upload" id="photo-upload-label">Attach Passport Size Photo</label>
+                <input type="file" id="photo-upload" accept="image/*">
+                <div id="photo-preview" class="preview-area"></div> 
+            </div>
+            <h2>ADMISSION FORM</h2>
+        </div>
+
+        <form id="admissionForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="b9e6b897-be95-4103-be83-0f1ddca45c35">
+            <input type="hidden" id="generated_bill_html_content" name="generated_bill_html_content">
+            <input type="hidden" id="dynamic_bill_view_link" name="bill_view_link">
+            <input type="hidden" id="generated_bill_image_dataurl" name="generated_bill_image_dataurl">
+            <input type="hidden" id="passport_photo_dataurl" name="passport_photo_dataurl">
+            <input type="hidden" id="money_screenshot_dataurl" name="money_screenshot_dataurl">
+            
+            <div class="form-group">
+                <label for="name" style="color: #ef3939f3; font-size: 0.5cm;">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="inline-group">
+                <div>
+                    <label for="father-name">Father's Name:</label>
+                    <input type="text" id="father-name" name="father_name" required>
+                </div>
+                <div>
+                    <label for="father-contact">Father's Contact:</label>
+                    <input type="tel" id="father-contact" name="father_contact" pattern="[0-9]{10}" placeholder="e.g., 98XXXXXXXX" title="10 digit phone number" required>
+                </div>
+            </div>
+
+            <div class="inline-group">
+                <div>
+                    <label for="mother-name">Mother's Name:</label>
+                    <input type="text" id="mother-name" name="mother_name" required>
+                </div>
+                <div>
+                    <label for="mother-contact">Mother's Contact:</label>
+                    <input type="tel" id="mother-contact" name="mother_contact" pattern="[0-9]{10}" placeholder="e.g., 98XXXXXXXX" title="10 digit phone number">
+                </div>
+            </div>
+
+            <div class="inline-group">
+                <div>
+                    <label for="yours-contact-no" style="color: #ff0000f3; font-size: 0.5cm;">Your Contact No:</label>
+                    <input type="tel" id="yours-contact-no" name="your_contact_no" pattern="[0-9]{10}" placeholder="e.g., 98XXXXXXXX" title="10 digit phone number" required>
+                </div>
+                <div>
+                    <label for="whatsapp">Whatsapp No:</label>
+                    <input type="tel" id="whatsapp" name="whatsapp_no" pattern="[0-9]{10}" placeholder="Optional: 98XXXXXXXX" title="10 digit phone number">
+                </div>
+            </div>
+
+            <div class="form-group radio-group">
+                <label>Gender:</label>
+                <input type="radio" id="male" name="gender" value="male" required>
+                <label for="male">Male</label>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label>
+
+                <label id="marital-status-label">Marital Status:</label>
+                <input type="radio" id="married" name="marital-status" value="married">
+                <label for="married">Married</label>
+                <input type="radio" id="unmarried" name="marital-status" value="unmarried">
+                <label for="unmarried">Unmarried</label>
+            </div>
+
+            <div class="inline-group">
+                <div>
+                    <label for="date-of-birth" style="color: #ef3939f3; font-size: 0.45cm;">Date of Birth (AD):</label>
+                    <input type="date" id="date-of-birth" name="date_of_birth" placeholder="YYYY-MM-DD" required>
+                </div>
+                <div>
+                    <label for="nationality">Nationality:</label>
+                    <input type="text" id="nationality" name="nationality" value="Nepali" required>
+                </div>
+
+                <div>
+                    <label for="sex">Sex:</label>
+                    <input class="sex" type="text" id="sex" name="sex" placeholder="e.g., M/F" required>
+                </div>
+                <div>
+                    <label for="client-email">Client Email:</label>
+                    <input type="email" id="client-email" name="client_email" required placeholder="e.g., student@example.com">
+                </div>
+            </div>
+            <div class="address-group">
+                <label for="permanent-address" class="long-input">Permanent Address:</label>
+
+                <label for="district-perm">District:</label>
+                <input type="text" id="district-perm" name="permanent_district" required>
+                <label for="province-perm">Province:</label> <input type="text" id="province-perm" name="permanent_province" value="Koshi Province" required>
+
+                <label for="municipality-vdc-perm">Municipality/VDC:</label>
+                <input type="text" id="municipality-vdc-perm" name="permanent_municipality_vdc" required>
+                <label for="ward-no-perm">Ward No:</label>
+                <input type="text" id="ward-no-perm" name="permanent_ward_no" required>
+                <label for="tole-perm">Tole:</label>
+                <input type="text" id="tole-perm" name="permanent_tole">
+            </div>
+
+            <div class="address-group">
+                <label for="temporary-address" class="long-input">Temporary Address (if different):</label>
+                <label for="district-temp">District:</label>
+                <input type="text" id="district-temp" name="temporary_district">
+                <label for="province-temp">Province:</label> <input type="text" id="province-temp" name="temporary_province">
+
+                <label for="municipality-vdc-temp">Municipality/VDC:</label>
+                <input type="text" id="municipality-vdc-temp" name="temporary_municipality_vdc">
+                <label for="ward-no-temp">Ward No:</label>
+                <input type="text" id="ward-no-temp" name="temporary_ward_no">
+                <label for="tole-temp">Tole:</label>
+                <input type="text" id="tole-temp" name="temporary_tole">
+            </div>
+
+            <div class="form-group">
+                <label for="school-college-organization" style="color: #ef3939f3; font-size: 0.5cm;">School/ College /Org. Name:</label>
+                <input type="text" id="school-college-organization" name="school_college_organization" class="long-input" required>
+            </div>
+
+            <div class="inline-group">
+                <div>
+                    <label for="profession">Profession:</label>
+                    <input type="text" id="profession" name="profession" required>
+                </div>
+                <div>
+                    <label for="faculty">Faculty:</label>
+                    <input type="text" id="faculty" name="faculty" required>
+                </div>
+                <div>
+                    <label for="level">Education Level:</label>
+                    <input type="text" id="level" name="education_level" placeholder="e.g., SEE, +2, Bachelor" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="subject-study" style="color: #ef3939f3; font-size: 0.5cm;">Subject (That You Want to Study):</label>
+                <input type="text" id="subject-study" name="subject_study" class="long-input" required>
+            </div>
+
+            <div class="time-group">
+                <label for="time">Preferred Time:</label>
+                <input type="text" id="time" name="preferred_time" placeholder="e.g., 10:00 AM" required>
+                <label for="duration">Course Duration:</label>
+                <input type="text" id="duration" name="course_duration" placeholder="e.g., 3 months" required>
+                <label for="shift">Shift:</label>
+                <select id="shift" name="shift" required>
+                    <option value="">-- Select --</option>
+                    <option value="morning">Morning</option>
+                    <option value="day">Day</option>
+                    <option value="evening">Evening</option>
+                </select>
+            </div>
+
+            <div class="date-group">
+                <div class="date-subgroup">
+                    <label>Starting Date (In B.S.):-</label>
+                    <input type="text" id="start-date-bs-yyyy" name="start_date_bs_yyyy" class="small-input" placeholder="YYYY" maxlength="4" size="4">
+                    <span>/</span>
+                    <input type="text" id="start-date-bs-mm" name="start_date_bs_mm" class="small-input" placeholder="MM" maxlength="2" size="2">
+                    <span>/</span>
+                    <input type="text" id="start-date-bs-dd" name="start_date_bs_dd" class="small-input" placeholder="DD" maxlength="2" size="2">
+                </div>
+                <div class="date-subgroup">
+                    <label>(In A.D.):-</label>
+                    <input type="text" id="start-date-ad-yyyy" name="start_date_ad_yyyy" class="small-input" placeholder="YYYY" maxlength="4" size="4">
+                    <span>/</span>
+                    <input type="text" id="start-date-ad-mm" name="start_date_ad_mm" class="small-input" placeholder="MM" maxlength="2" size="2">
+                    <span>/</span>
+                    <input type="text" id="start-date-ad-dd" name="start_date_ad_dd" class="small-input" placeholder="DD" maxlength="2" size="2">
+                </div>
+            </div>
+
+            <div class="date-group">
+                <div class="date-subgroup">
+                    <label>Completion Date (In B.S.):-</label>
+                    <input type="text" id="completion-date-bs-yyyy" name="completion_date_bs_yyyy" class="small-input" placeholder="YYYY" maxlength="4" size="4">
+                    <span>/</span>
+                    <input type="text" id="completion-date-bs-mm" name="completion_date_bs_mm" class="small-input" placeholder="MM" maxlength="2" size="2">
+                    <span>/</span>
+                    <input type="text" id="completion-date-bs-dd" name="completion_date_bs_dd" class="small-input" placeholder="DD" maxlength="2" size="2">
+                </div>
+                <div class="date-subgroup">
+                    <label>(In A.D.):-</label>
+                    <input type="text" id="completion-date-ad-yyyy" name="completion_date_ad_yyyy" class="small-input" placeholder="YYYY" maxlength="4" size="4">
+                    <span>/</span>
+                    <input type="text" id="completion-date-ad-mm" name="completion_date_ad_mm" class="small-input" placeholder="MM" maxlength="2" size="2">
+                    <span>/</span>
+                    <input type="text" id="completion-date-ad-dd" name="completion_date_ad_dd" class="small-input" placeholder="DD" maxlength="2" size="2">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="admission-amount" style="color: #ef3939f3; font-size: 0.5cm;">Admission Amount (NPR):</label>
+                <input type="number" id="admission-amount" name="admission_amount" min="0" step="1" required placeholder="e.g., 15000">
+            </div>
+
+            <div class="form-group money-screenshot-form-group">
+                   <label style="color: #ef3939f3; font-size: 0.5cm;">Payment Proofs:</label>
+                 <div class="payment-qr-group">
+                                 
+
+                    <div class="photo-upload-box">
+                        <label for="money-screenshot-upload" id="money-screenshot-label">Upload <br>Payment <br> Screenshot</label>
+                        <input type="file" id="money-screenshot-upload" accept="image/*">
+                        <div id="money-screenshot-preview" class="preview-area"></div>
+                    </div>
+                    <div class="qr-code-display-box">
+                        <img src="sita_ram_hanuman_qr.png" alt="QR Code for Payment">
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3 style="color: #ef3939f3; font-size: 0.5cm;">Institute Regulations:</h3>
+                <ol>
+                    <li>Students must pay 50% of the fee and Rs. 100 mandatorily during admission.</li>
+                    <li>The paid amount will not be refunded, and the remaining amount must be paid within 15 days.</li>
+                    <li>Students must attend classes regularly. The academy will not be responsible for missed classes.</li>
+                    <li>If actions are taken against academy rules, legal punishment will be incurred.</li>
+                    <li>Students are responsible for the safety of their own belongings.</li>
+                </ol>
+            </div>
+
+            <div class="signatures">
+                <div class="signature-item">
+                    <input type="text" id="student-signature" name="student_signature" placeholder="Signature Line">
+                    <p>Students Signature</p>
+                </div>
+                <div class="signature-item">
+                    <input type="text" id="date-signature" name="date_signature" placeholder="Date">
+                    <p>Date</p>
+                </div>
+                <div class="signature-item">
+                    <input type="text" id="authorize-signature" name="authorize_signature" placeholder="Signature Line">
+                    <p>Authorize Signature</p>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit">Submit Form</button>
+                <button type="reset">Reset Form</button>
+            </div>
+        </form>
+
+        <div id="bill-display-section" class="hidden">
+            <div class="receipt-container">
+                <style>
+                    /* Specific styles for the receipt container to isolate them */
+                    .receipt-container {
+                        background-color: #ff99cc;
+                        color: #000;
+                        padding: 25px 30px;
+                        width: 680px;
+                        max-width: 100%; /* Ensure responsiveness */
+                        border-radius: 6px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+                        position: relative;
+                        box-sizing: border-box; /* Include padding in width */
+                    }
+
+                    .receipt-container .field-row {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 8px;
+                    }
+
+                    .receipt-container .field-row label {
+                        width: 130px;
+                        font-size: 0.9em;
+                        flex-shrink: 0;
+                    }
+
+                    /* Updated: Apply styling to spans instead of inputs */
+                    .receipt-container .receipt-text-display {
+                        flex: 1;
+                        border: none;
+                        border-bottom: 1px dashed #000;
+                        background: transparent;
+                        font-size: 0.9em;
+                        color: #000;
+                        padding: 4px 2px;
+                        outline: none;
+                        min-height: 1.2em; /* Ensure some height even if empty */
+                        display: inline-block; /* Allows padding and border-bottom to work */
+                        word-break: break-word; /* Prevent long words from overflowing */
+                    }
+
+                    .double-field {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 20px;
+                        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+                    }
+
+                    .receipt-container .double-field .field-row {
+                        flex: 1;
+                        min-width: 250px; /* Ensure fields don't get too small */
+                        margin-right: 0; /* Reset margin from main form styles */
+                    }
+
+                    .receipt-container .payment-group {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        flex-wrap: wrap; /* Allow wrapping */
+                    }
+
+                    .receipt-container .payment-group .field-row {
+                        flex: 1;
+                        margin-right: 10px;
+                        min-width: 250px; /* Ensure fields don't get too small */
+                    }
+
+                    .receipt-container .signature-box {
+                        width: 150px;
+                        height: 30px;
+                        border: 1px solid #000;
+                        background-color: transparent;
+                        font-size: 0.9em;
+                        color: #000;
+                        text-align: center;
+                        padding: 4px 6px;
+                    }
+
+                    .receipt-container .received-by {
+                        text-align: right;
+                        margin-top: 10px;
+                        font-size: 0.9em;
+                    }
+
+                    .receipt-container .top-header {
+                        display: flex;
+                        justify-content: space-between;
+                        font-size: 0.9em;
+                        margin-bottom: 5px;
+                        flex-wrap: wrap; /* Allow wrapping */
+                    }
+
+                    .receipt-container .top-header-left {
+                        line-height: 1.5;
+                        flex: 1; /* Allow to take space */
+                        min-width: 150px;
+                    }
+
+                    .receipt-container .top-header-right {
+                        text-align: right;
+                        line-height: 1.3;
+                        flex: 1; /* Allow to take space */
+                        min-width: 100px;
+                    }
+
+                    .receipt-container .sno-line {
+                        font-size: 0.95em;
+                        font-weight: bold;
+                    }
+
+                    .receipt-container .company-info {
+                        text-align: center;
+                        margin-top: 5px;
+                        flex: 2; /* Give more space to company info */
+                        min-width: 250px;
+                    }
+
+                    .receipt-container .company-info h1 {
+                        margin: 4px 0;
+                        font-size: 1.4em;
+                    }
+
+                    .receipt-container .company-info p {
+                        margin: 2px 0;
+                        font-size: 0.95em;
+                    }
+
+                    .receipt-container .non-refundable-box {
+                        display: inline-block;
+                        padding: 4px 12px;
+                        border: 2px solid #000;
+                        font-weight: bold;
+                        font-size: 0.85em;
+                        border-radius: 8px;
+                        text-align: center;
+                        background-color: #ff99cc;
+                    }
+
+                    .receipt-container .non-refundable-line {
+                        display: flex;
+                        align-items: center;
+                        text-align: center;
+                        margin: 20px 0;
+                    }
+
+                    .receipt-container .non-refundable-line::before,
+                    .receipt-container .non-refundable-line::after {
+                        content: '';
+                        flex: 1;
+                        border-top: 2px solid #000;
+                        height: 1px;
+                    }
+
+                    .receipt-container .non-refundable-line::before {
+                        margin-right: 10px;
+                        border-radius: 20px 0 0 20px;
+                    }
+
+                    .receipt-container .non-refundable-line::after {
+                        margin-left: 10px;
+                        border-radius: 0 20px 20px 0;
+                    }
+
+                    .receipt-container .date-info {
+                        display: flex;
+                        justify-content: flex-end;
+                        flex-direction: column;
+                        align-items: flex-end;
+                        font-size: 0.9em;
+                        margin-bottom: 20px;
+                    }
+
+                    .receipt-container .date-info .field-row {
+                        width: auto;
+                    }
+
+                    /* Updated: Apply styling to spans for date info */
+                    .receipt-container .date-info .receipt-text-display {
+                        width: 150px;
+                    }
+                </style>
+
+                <div id="receipt-content-area">
+                    <div class="top-header">
+                        <div class="sno-line">
+                            <label for="receipt-sno"><strong>S.No.</strong></label>
+                            <span id="receipt-sno" class="receipt-text-display" style="width: 100px; font-size: 1.22em;"></span>
+                        </div>
+
+                        <div class="company-info">
+                            <h1>Maharathi Academy &amp; Computer Center</h1>
+                            <p>Biratnagar-00, Bhairav Chowk, Morang, Nepal</p>
+                            <p>E-mail:<a href="mailto:09isar2006@gmail.com">maharathi.academy322@gmail.com</a></p>
+                        </div>
+
+                        <div class="top-header-right">
+                            <div>021-461321</div>
+                            <div>9842335552</div>
+                            <div>9810548303</div>
+                        </div>
+                    </div>
+
+                    <div><strong>PAN No.</strong> 096127350</div>
+
+                    <div class="date-info">
+                        <div class="field-row">
+                            <label style="width: auto;">Date: A.D.</label>
+                            <span id="receipt-date-ad" class="receipt-text-display"></span>
+                        </div>
+                        <div class="field-row">
+                            <label style="width: auto;">Date: B.S.</label>
+                            <span id="receipt-date-bs" class="receipt-text-display"></span>
+                        </div>
+                    </div>
+
+                    <div class="non-refundable-line">
+                        <div class="non-refundable-box">Non-Refundable Cash Receipt</div>
+                    </div>
+
+                    <div class="field-row"><label>Name:</label><span id="receipt-name" class="receipt-text-display"></span></div>
+
+                    <div class="double-field">
+                        <div class="field-row"><label>Address:</label><span id="receipt-address" class="receipt-text-display"></span></div>
+                        <div class="field-row"><label>Contact No.:</label><span id="receipt-contact-no" class="receipt-text-display"></span></div>
+                    </div>
+
+                    <div class="double-field">
+                        <div class="field-row"><label>Course:</label><span id="receipt-course" class="receipt-text-display"></span></div>
+                        <div class="field-row"><label>Course Durations:</label><span id="receipt-course-duration" class="receipt-text-display"></span></div>
+                    </div>
+
+                    <div class="payment-group">
+                        <div class="field-row">
+                            <label>Descriptions:</label>
+                            <span id="receipt-descriptions" class="receipt-text-display">Admission Fee</span>
+                        </div>
+                        <div style="white-space: nowrap;">
+                            <label>By Cash / Cheque / E-Sewa</label>
+                        </div>
+                    </div>
+
+                    <div class="payment-group">
+                        <div class="field-row">
+                            <label>Amount in words:</label>
+                            <span id="receipt-amount-words" class="receipt-text-display"></span>
+                        </div>
+                        <span class="signature-box receipt-text-display" id="receipt-amount-numeric"></span>
+                    </div>
+
+                    <div class="field-row"><label>Reference:</label><span id="receipt-reference" class="receipt-text-display"></span></div>
+
+                    <div class="received-by">Received By</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="uploaded-photos-section" class="hidden mt-8 p-6 bg-green-50 rounded-lg shadow-inner w-full text-center">
+            <h2 class="text-xl font-bold text-green-700 mb-4">Uploaded Photos Preview (Click image to Copy Base64)</h2>
+            <div class="flex flex-wrap justify-center gap-6">
+                <div id="passport-photo-display" class="photo-display-box hidden">
+                    <h3 class="text-lg font-semibold mb-2">Passport Photo</h3>
+                    <img id="display-passport-photo" src="" alt="Passport Photo" class="max-w-full h-auto mx-auto border border-gray-300 cursor-pointer">
+                    <p class="text-sm text-gray-600 mt-2">Click image to copy Base64</p>
+                </div>
+                <div id="money-screenshot-display" class="photo-display-box hidden">
+                    <h3 class="text-lg font-semibold mb-2">Payment Screenshot</h3>
+                    <img id="display-money-screenshot" src="" alt="Payment Screenshot" class="max-w-full h-auto mx-auto border border-gray-300 cursor-pointer">
+                    <p class="text-sm text-gray-600 mt-2">Click image to copy Base64</p>
+                </div>
+            </div>
+            <button id="hide-uploaded-photos" class="mt-6 bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600">Hide Photos</button>
+        </div>
+
+    </div>
+
+    <div id="custom-alert-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <p id="custom-alert-message" class="text-lg mb-4"></p>
+            <button id="custom-alert-ok-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle photo upload preview and **resize/compress** (reusable for passport and money screenshots)
+        function setupPhotoUpload(inputId, previewId, labelId, hiddenInputId, maxWidth, maxHeight, quality) {
+            const fileInput = document.getElementById(inputId);
+            const previewArea = document.getElementById(previewId);
+            const labelElement = document.getElementById(labelId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files && event.target.files[0];
+                if (file) {
+                    // Basic file type validation
+                    if (!file.type.startsWith('image/')) {
+                        showCustomAlert('Please upload an image file (e.g., JPG, PNG).');
+                        // Clear input if non-image file is selected
+                        fileInput.value = '';
+                        previewArea.style.display = 'none';
+                        previewArea.style.backgroundImage = '';
+                        labelElement.style.display = 'flex';
+                        hiddenInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            let width = img.width;
+                            let height = img.height;
+
+                            // Calculate new dimensions to fit within maxWidth/maxHeight while maintaining aspect ratio
+                            if (width > maxWidth || height > maxHeight) {
+                                if (width / maxWidth > height / maxHeight) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                } else {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                }
+                            }
+
+                            // Create a temporary canvas element for resizing
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            // Draw the image on the canvas with new dimensions
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            // Get the data URL from the canvas, using JPEG for better compression
+                            // The quality parameter (0.0 to 1.0) controls compression level
+                            const resizedDataUrl = canvas.toDataURL('image/jpeg', quality);
+
+                            previewArea.style.backgroundImage = `url(${resizedDataUrl})`;
+                            previewArea.style.display = 'block';
+                            labelElement.style.display = 'none';
+                            hiddenInput.value = resizedDataUrl; // Store the resized Base64 data
+                        };
+                        img.src = e.target.result; // Load image data into Image object
+                    };
+                    reader.readAsDataURL(file); // Read the uploaded file as a Data URL
+                } else {
+                    // Clear preview if no file is selected
+                    previewArea.style.display = 'none';
+                    previewArea.style.backgroundImage = '';
+                    labelElement.style.display = 'flex';
+                    hiddenInput.value = ''; // Clear data
+                }
+            });
+        }
+
+        // Setup for Passport Photo: Smaller dimensions, good quality
+        setupPhotoUpload('photo-upload', 'photo-preview', 'photo-upload-label', 'passport_photo_dataurl', 300, 400, 0.85); // Max 300px width, 400px height, 85% quality
+
+        // Setup for Payment Screenshot: Larger dimensions for clarity, slightly lower quality for size
+        setupPhotoUpload('money-screenshot-upload', 'money-screenshot-preview', 'money-screenshot-label', 'money_screenshot_dataurl', 800, 800, 0.7); // Max 800px on longest side, 70% quality
+
+        // Add today's date to the 'Date' signature field on load (optional)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateSignatureInput = document.getElementById('date-signature');
+            if (dateSignatureInput) {
+                const today = new Date();
+                const dd = String(today.getDate()).padStart(2, '0');
+                const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                const yyyy = today.getFullYear();
+                dateSignatureInput.value = `${dd}/${mm}/${yyyy}`;
+            }
+        });
+
+        // --- Custom Alert Modal Functions ---
+        function showCustomAlert(message) {
+            const modal = document.getElementById('custom-alert-modal');
+            const msgElement = document.getElementById('custom-alert-message');
+            const okButton = document.getElementById('custom-alert-ok-button');
+
+            msgElement.textContent = message;
+            modal.classList.remove('hidden');
+
+            const closeAlert = () => {
+                modal.classList.add('hidden');
+                okButton.removeEventListener('click', closeAlert);
+            };
+
+            okButton.addEventListener('click', closeAlert);
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showCustomAlert('Base64 code copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text:', err);
+                showCustomAlert('Failed to copy Base64 code. Please copy manually.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // --- Billing and Email Automation Logic ---
+
+        const admissionForm = document.getElementById('admissionForm');
+        const generatedBillHtmlContentInput = document.getElementById('generated_bill_html_content');
+        const dynamicBillViewLinkInput = document.getElementById('dynamic_bill_view_link');
+        const generatedBillImageDataUrlInput = document.getElementById('generated_bill_image_dataurl');
+        const passportPhotoDataUrlInput = document.getElementById('passport_photo_dataurl');
+        const moneyScreenshotDataUrlInput = document.getElementById('money_screenshot_dataurl');
+        
+        // Elements for displaying uploaded photos (these remain)
+        const uploadedPhotosSection = document.getElementById('uploaded-photos-section');
+        const passportPhotoDisplayDiv = document.getElementById('passport-photo-display');
+        const moneyScreenshotDisplayDiv = document.getElementById('money-screenshot-display');
+        const displayPassportPhoto = document.getElementById('display-passport-photo');
+        const displayMoneyScreenshot = document.getElementById('display-money-screenshot');
+        const hideUploadedPhotosBtn = document.getElementById('hide-uploaded-photos');
+
+
+        let currentBillData = null; // Store bill data to be used for email generation
+
+        // Function to convert number to English words
+        function numberToEnglishWords(num) {
+            const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+            const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+            const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
+
+            if (num === 0) return 'zero only';
+
+            let result = '';
+            let numStr = String(num);
+
+            const parts = numStr.split('.');
+            let integerPart = parseInt(parts[0]);
+            let decimalPart = parts.length > 1 ? parseInt(parts[1]) : 0;
+
+            if (integerPart === 0) {
+                result = 'zero';
+            } else {
+                let i = 0;
+                while (integerPart > 0) {
+                    let chunk = integerPart % 1000;
+                    integerPart = Math.floor(integerPart / 1000);
+
+                    if (chunk > 0) {
+                        let chunkWords = '';
+                        const hundredsDigit = Math.floor(chunk / 100);
+                        const remainder = chunk % 100;
+
+                        if (hundredsDigit > 0) {
+                            chunkWords += units[hundredsDigit] + ' hundred';
+                            if (remainder > 0) {
+                                chunkWords += ' and ';
+                            }
+                        }
+
+                        if (remainder > 0) {
+                            if (remainder < 10) {
+                                chunkWords += units[remainder];
+                            } else if (remainder >= 10 && remainder < 20) {
+                                chunkWords += teens[remainder - 10];
+                            } else {
+                                chunkWords += tens[Math.floor(remainder / 10)];
+                                if (remainder % 10 !== 0) {
+                                    chunkWords += ' ' + units[remainder % 10];
+                                }
+                            }
+                        }
+
+                        if (scales[i]) {
+                            result = chunkWords + ' ' + scales[i] + ' ' + result;
+                        } else {
+                            result = chunkWords + ' ' + result;
+                        }
+                    }
+                    i++;
+                }
+            }
+
+            // Handle decimal part for currency (assuming 2 decimal places)
+            if (decimalPart > 0) {
+                let paisaWords = '';
+                if (decimalPart < 10) {
+                    paisaWords = units[decimalPart];
+                } else if (decimalPart >= 10 && decimalPart < 20) {
+                    paisaWords = teens[decimalPart - 10];
+                } else {
+                    paisaWords = tens[Math.floor(decimalPart / 10)];
+                    if (decimalPart % 10 !== 0) {
+                        paisaWords += ' ' + units[decimalPart % 10];
+                    }
+                }
+                result += (result ? ' and ' : '') + paisaWords + ' paisa';
+            }
+
+            return result.trim() + ' only';
+        }
+
+
+        // Function to handle form submission and generate bill/receipt
+        admissionForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission to handle it via fetch
+
+            console.log('Form submission initiated.');
+
+            // Helper function to decode and replace '+' with spaces
+            const cleanInput = (value) => decodeURIComponent(value.replace(/\+/g, ' '));
+
+            // Collect data from the form and ensure it's fully decoded
+            const studentName = cleanInput(document.getElementById('name').value);
+            const fatherName = cleanInput(document.getElementById('father-name').value);
+            const fatherContact = cleanInput(document.getElementById('father-contact').value);
+            const motherName = cleanInput(document.getElementById('mother-name').value);
+            const motherContact = cleanInput(document.getElementById('mother-contact').value);
+            const yourContactNo = cleanInput(document.getElementById('yours-contact-no').value);
+            const whatsappNo = cleanInput(document.getElementById('whatsapp').value);
+            const gender = cleanInput(document.querySelector('input[name="gender"]:checked')?.value || '');
+            const maritalStatus = cleanInput(document.querySelector('input[name="marital-status"]:checked')?.value || '');
+            const dateOfBirth = cleanInput(document.getElementById('date-of-birth').value);
+            const nationality = cleanInput(document.getElementById('nationality').value);
+            const sex = cleanInput(document.getElementById('sex').value);
+            const clientEmail = cleanInput(document.getElementById('client-email').value);
+
+            const permanentDistrict = cleanInput(document.getElementById('district-perm').value);
+            const permanentProvince = cleanInput(document.getElementById('province-perm').value);
+            const permanentMunicipalityVdc = cleanInput(document.getElementById('municipality-vdc-perm').value);
+            const permanentWardNo = cleanInput(document.getElementById('ward-no-perm').value);
+            const permanentTole = cleanInput(document.getElementById('tole-perm').value);
+
+            const temporaryDistrict = cleanInput(document.getElementById('district-temp').value);
+            const temporaryProvince = cleanInput(document.getElementById('province-temp').value);
+            const temporaryMunicipalityVdc = cleanInput(document.getElementById('municipality-vdc-temp').value);
+            const temporaryWardNo = cleanInput(document.getElementById('ward-no-temp').value);
+            const temporaryTole = cleanInput(document.getElementById('tole-temp').value);
+
+            const schoolCollegeOrganization = cleanInput(document.getElementById('school-college-organization').value);
+            const profession = cleanInput(document.getElementById('profession').value);
+            const faculty = cleanInput(document.getElementById('faculty').value);
+            const educationLevel = cleanInput(document.getElementById('level').value);
+            const subjectStudy = cleanInput(document.getElementById('subject-study').value);
+            const preferredTime = cleanInput(document.getElementById('time').value);
+            const courseDuration = cleanInput(document.getElementById('duration').value);
+            const shift = cleanInput(document.getElementById('shift').value);
+            const startDateBS = cleanInput(`${document.getElementById('start-date-bs-yyyy').value}/${document.getElementById('start-date-bs-mm').value}/${document.getElementById('start-date-bs-dd').value}`);
+            const startDateAD = cleanInput(`${document.getElementById('start-date-ad-yyyy').value}/${document.getElementById('start-date-ad-mm').value}/${document.getElementById('start-date-ad-dd').value}`);
+            const completionDateBS = cleanInput(`${document.getElementById('completion-date-bs-yyyy').value}/${document.getElementById('completion-date-bs-mm').value}/${document.getElementById('completion-date-bs-dd').value}`);
+            const completionDateAD = cleanInput(`${document.getElementById('completion-date-ad-yyyy').value}/${document.getElementById('completion-date-ad-mm').value}/${document.getElementById('completion-date-ad-dd').value}`);
+            const admissionAmount = parseFloat(document.getElementById('admission-amount').value).toFixed(2);
+            
+
+            const formData = {
+                studentName, fatherName, fatherContact, motherName, motherContact,
+                yourContactNo, whatsappNo, gender, maritalStatus, dateOfBirth,
+                nationality, sex, clientEmail, 
+                permanentAddress: {
+                    district: permanentDistrict,
+                    province: permanentProvince,
+                    municipalityVdc: permanentMunicipalityVdc,
+                    wardNo: permanentWardNo,
+                    tole: permanentTole,
+                },
+                temporaryAddress: {
+                    district: temporaryDistrict,
+                    province: temporaryProvince,
+                    municipalityVdc: temporaryMunicipalityVdc,
+                    wardNo: temporaryWardNo,
+                    tole: temporaryTole,
+                },
+                schoolCollegeOrganization, profession, faculty, educationLevel,
+                subjectStudy, preferredTime, courseDuration, shift,
+                startDateBS, startDateAD, completionDateBS, completionDateAD,
+                admissionAmount,
+            };
+
+            // Generate bill data (for email and internal use)
+            const billId = `UACCO-${Date.now().toString().slice(-6)}`; // Unique bill ID, shorter
+            const billDateAD = formData.startDateAD; // Use admission date as bill date
+            const billDateBS = formData.startDateBS;
+
+            currentBillData = {
+                billId: billId,
+                dateAD: billDateAD,
+                dateBS: billDateBS,
+                // Explicitly replace %20 with _ and %2C with , for the bill data
+                studentName: formData.studentName.replace(/%20/g, '_'),
+                address: `${formData.permanentAddress.municipalityVdc}, Ward No. ${formData.permanentAddress.wardNo}, ${formData.permanentAddress.district}, ${formData.permanentAddress.province}`
+                           .replace(/%20/g, '_')
+                           .replace(/%2C/g, ','), // Replace %2C with ,
+                contactNo: formData.yourContactNo,
+                course: formData.subjectStudy,
+                courseDuration: formData.courseDuration,
+                amountNumeric: formData.admissionAmount,
+                amountWords: numberToEnglishWords(formData.admissionAmount), 
+                clientEmail: formData.clientEmail,
+                status: 'Pending Payment',
+            };
+
+            // Populate the receipt display section (even if hidden, for capturing HTML and image)
+            // Changed to textContent for spans
+            document.getElementById('receipt-sno').textContent = currentBillData.billId;
+            document.getElementById('receipt-date-ad').textContent = currentBillData.dateAD;
+            document.getElementById('receipt-date-bs').textContent = currentBillData.dateBS;
+            
+            document.getElementById('receipt-name').textContent = currentBillData.studentName; 
+            document.getElementById('receipt-address').textContent = currentBillData.address;
+            
+            document.getElementById('receipt-contact-no').textContent = currentBillData.contactNo;
+            document.getElementById('receipt-course').textContent = currentBillData.course;
+            document.getElementById('receipt-course-duration').textContent = currentBillData.courseDuration;
+            document.getElementById('receipt-amount-words').textContent = currentBillData.amountWords;
+            document.getElementById('receipt-amount-numeric').textContent = currentBillData.amountNumeric; // Numeric amount is a span now
+            document.getElementById('receipt-descriptions').textContent = "Admission Fee";
+            document.getElementById('receipt-reference').textContent = "";
+
+            // Capture the generated receipt HTML content
+            const receiptHtmlContent = document.getElementById('receipt-content-area').innerHTML;
+            generatedBillHtmlContentInput.value = receiptHtmlContent;
+
+            // --- Generate Bill Image using html2canvas ---
+            let billImageDataUrl = '';
+            
+            try {
+                console.log('Attempting to generate bill image with html2canvas...');
+                const canvas = await html2canvas(document.getElementById('receipt-content-area'), {
+                    scale: 2, // Increase scale for higher resolution image
+                    useCORS: true, // Needed if you have images from different origins (e.g., QR code)
+                    allowTaint: true, // Allows cross-origin images to be drawn, but taints the canvas
+                });
+                // Compress the generated bill image as well to reduce total payload size
+                billImageDataUrl = canvas.toDataURL('image/jpeg', 0.8); // 80% quality for bill image
+                generatedBillImageDataUrlInput.value = billImageDataUrl;
+
+                console.log('Bill image generated successfully for email! Data URL length:', billImageDataUrl.length);
+            } catch (error) {
+                console.error('Error generating bill image:', error);
+                showCustomAlert('Failed to generate bill image for email. The form data will still be submitted.');
+                generatedBillImageDataUrlInput.value = 'Image generation failed.';
+            }
+
+            // --- Construct the dynamic bill view link ---
+            const baseBillUrl = 'https://hosttypehuntera09.github.io/academy-bill/';
+            const params = new URLSearchParams();
+            params.append('billId', currentBillData.billId);
+            params.append('dateAD', currentBillData.dateAD);
+            params.append('dateBS', currentBillData.dateBS);
+            params.append('studentName', currentBillData.studentName); // Still encode for URL safety
+            params.append('address', currentBillData.address); // Still encode for URL safety
+            params.append('contactNo', currentBillData.contactNo);
+            params.append('course', currentBillData.course);
+            params.append('courseDuration', currentBillData.courseDuration);
+            params.append('descriptions', document.getElementById('receipt-descriptions').textContent); // Use textContent for span
+            params.append('amountWords', currentBillData.amountWords);
+            params.append('amountNumeric', currentBillData.amountNumeric);
+            params.append('reference', document.getElementById('receipt-reference').textContent); // Use textContent for span
+
+            const billViewLink = `${baseBillUrl}?${params.toString()}`;
+            dynamicBillViewLinkInput.value = billViewLink;
+            console.log('Dynamic Bill View Link:', billViewLink);
+
+            // Prepare data for Web3Forms submission using FormData
+            const web3formsData = new FormData(admissionForm);
+
+            // --- Send data to Web3Forms (for your Gmail) ---
+            try {
+                console.log('Attempting to send form data to Web3Forms...');
+                const web3formsResponse = await fetch(admissionForm.action, {
+                    method: admissionForm.method,
+                    body: web3formsData
+                });
+
+                if (web3formsResponse.ok) {
+                    console.log('Form data, bill HTML, image data, and dynamic link successfully sent to Web3Forms!');
+                } else {
+                    const errorData = await web3formsResponse.json(); // Try to get more specific error from Web3Forms
+                    console.error('Failed to send form data to Web3Forms:', web3formsResponse.status, web3formsResponse.statusText, errorData);
+                    showCustomAlert(`Error sending form data to your Gmail. Please check Web3Forms configuration. Server response: ${errorData.message || web3formsResponse.statusText}`);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error submitting form to Web3Forms:', error);
+                showCustomAlert('Network error or other issue during form submission to Web3Forms. This might be due to very large images, please check your network or try resizing images.');
+                return;
+            }
+
+            // --- Display uploaded photos and set up copy functionality (these remain) ---
+            // Removed the logic that makes the uploadedPhotosSection visible.
+            // The data is still sent to the backend.
+            const passportPhotoData = passportPhotoDataUrlInput.value;
+            const moneyScreenshotData = moneyScreenshotDataUrlInput.value;
+
+            // These lines are now effectively dead code for display purposes, but they ensure
+            // the data is still being processed and stored in the hidden inputs.
+            if (passportPhotoData) {
+                displayPassportPhoto.src = passportPhotoData;
+                displayPassportPhoto.onclick = () => copyToClipboard(passportPhotoData);
+            } else {
+                displayPassportPhoto.src = '';
+                displayPassportPhoto.onclick = null;
+            }
+
+            if (moneyScreenshotData) {
+                displayMoneyScreenshot.src = moneyScreenshotData;
+                displayMoneyScreenshot.onclick = () => copyToClipboard(moneyScreenshotData);
+            } else {
+                displayMoneyScreenshot.src = '';
+                displayMoneyScreenshot.onclick = null;
+            }
+
+            // The section itself is now permanently hidden via CSS and initial JS state.
+            uploadedPhotosSection.classList.add('hidden'); // Ensure it's always hidden
+            passportPhotoDisplayDiv.classList.add('hidden');
+            moneyScreenshotDisplayDiv.classList.add('hidden');
+            console.log('Uploaded photos section remains hidden, data sent to Gmail.');
+
+
+            // Show a combined success message
+            showCustomAlert(`Admission form submitted successfully! All form data, including the generated bill (HTML and image as data URLs), and uploaded photos have been sent to your Gmail via Web3Forms. Please check your Gmail (and spam/junk folder) to find the details.
+
+Please note: Direct sending of images to WhatsApp from this form is not possible. You can download the images from your Gmail if needed. The "Click image to Copy Base64" functionality is for the previews on this web page, not within the downloaded PDFs.`);
+
+            // Reset the form after successful submission
+            admissionForm.reset();
+            document.getElementById('photo-preview').style.display = 'none';
+            document.getElementById('photo-preview').style.backgroundImage = '';
+            document.getElementById('photo-upload-label').style.display = 'flex';
+            passportPhotoDataUrlInput.value = '';
+            
+            document.getElementById('money-screenshot-preview').style.display = 'none';
+            document.getElementById('money-screenshot-preview').style.backgroundImage = '';
+            document.getElementById('money-screenshot-label').style.display = 'flex';
+            moneyScreenshotDataUrlInput.value = '';
+            console.log('Form reset and photo previews cleared.');
+        });
+
+        // Event listener for the "Hide Photos" button (now redundant as section is always hidden)
+        hideUploadedPhotosBtn.addEventListener('click', () => {
+            uploadedPhotosSection.classList.add('hidden');
+            passportPhotoDisplayDiv.classList.add('hidden');
+            moneyScreenshotDisplayDiv.classList.add('hidden');
+            displayPassportPhoto.src = '';
+            displayMoneyScreenshot.src = '';
+            displayPassportPhoto.onclick = null;
+            displayMoneyScreenshot.onclick = null;
+            console.log('Uploaded photos section hidden.');
+        });
+
+        // Also ensure these are hidden on initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            uploadedPhotosSection.classList.add('hidden');
+            passportPhotoDisplayDiv.classList.add('hidden');
+            moneyScreenshotDisplayDiv.classList.add('hidden');
+            console.log('Initial state: All photo and PDF sections are hidden.');
+        });
+    </script>
+</body>
+</html>
